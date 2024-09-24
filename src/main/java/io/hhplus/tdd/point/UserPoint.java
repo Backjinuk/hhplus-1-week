@@ -10,6 +10,10 @@ public record UserPoint(
 		return new UserPoint(id, 0, System.currentTimeMillis());
 	}
 
+	public static UserPoint changePoint(UserPoint userPoint, long point) {
+		return new UserPoint(userPoint.id, point, userPoint.updateMillis());
+	}
+
 	public UserPoint {
 		if (id <= 0) {
 			throw new IllegalArgumentException("유효 하지 않은 UserId 입니다.");

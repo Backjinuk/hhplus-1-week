@@ -9,13 +9,13 @@ import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
 
 @Repository
-public class PointRepositoryImpl implements PointRepository{
+public class PointRepositoryImpl implements PointRepository {
 
 	private final UserPointTable userPointTable;
 	private final PointHistoryTable pointHistoryTable;
 
 	@Autowired
-	public PointRepositoryImpl(UserPointTable userPointTable, PointHistoryTable pointHistoryTable){
+	public PointRepositoryImpl(UserPointTable userPointTable, PointHistoryTable pointHistoryTable) {
 		this.userPointTable = userPointTable;
 		this.pointHistoryTable = pointHistoryTable;
 	}
@@ -38,5 +38,15 @@ public class PointRepositoryImpl implements PointRepository{
 	@Override
 	public List<PointHistory> selectAllByUserId(long id) {
 		return pointHistoryTable.selectAllByUserId(id);
+	}
+
+	@Override
+	public UserPoint selectUserPoint(long userId) {
+		return userPointTable.selectById(userId);
+	}
+
+	@Override
+	public UserPoint useUserPoints(long userId, long point) {
+		return userPointTable.insertOrUpdate(userId, point);
 	}
 }
