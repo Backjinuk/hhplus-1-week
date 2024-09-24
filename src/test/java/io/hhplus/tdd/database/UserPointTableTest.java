@@ -21,6 +21,7 @@ class UserPointTableTest {
 	 * 1. insertOrUpdate_올바른_값으로_등록
 	 * 2. insertOrUpdate_업데이트_값_반영_테스트
 	 * 3. insertOrUpdate_시간_갱신_테스트
+	 * 4. insertOrUpdate_amount가_경계값일때_정상등록
 	 *
 	 * 실패 케이스:
 	 * 1. inserOrUpdate시_id가_0인_경우
@@ -28,6 +29,7 @@ class UserPointTableTest {
 	 * 3. insertOrUpdate_null_ID_예외발생
 	 *
 	 * */
+
 	@Test
 	@DisplayName("insertOrUpdate 올바른 값으로 등록")
 	void insertOrUpdate_올바른_값으로_등록() {
@@ -43,6 +45,8 @@ class UserPointTableTest {
 		assertThat(userPoint.point()).isEqualTo(amount);
 	}
 
+
+
 	@Test
 	@DisplayName("insertOrUpdate시 id가 0인 경우")
 	void inserOrUpdate시_id가_0인_경우() {
@@ -55,8 +59,25 @@ class UserPointTableTest {
 		// then
 		assertThatThrownBy(() -> userPointTable.insertOrUpdate(id, amount))
 			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("유효 하지 앟는 UserId입니다.");
+			.hasMessage("유효 하지 않은 UserId 입니다.");
 	}
+
+
+	@Test
+	@DisplayName("insertOrUpdate시 amount가 경계값(1)일때 정상 등록 확인")
+	void insertOrUpdate_경계값_등록_확인() {
+		// given
+		long id = 1;
+		long amount = 1; // 경계값
+
+		// when
+		UserPoint userPoint = userPointTable.insertOrUpdate(id, amount);
+
+		// then
+		assertThat(userPoint.id()).isEqualTo(id);
+		assertThat(userPoint.point()).isEqualTo(amount);
+	}
+
 
 	@Test
 	@DisplayName("insertOrUpdate시 amount가 음수인경우")
