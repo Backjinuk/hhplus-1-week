@@ -38,7 +38,7 @@ class PointServiceTest {
 	@DisplayName("유저가 정상적으로 포인트 충전")
 	void 유저가_정상적으로_포인트_충전() {
 		// given
-		long userId = System.currentTimeMillis();  
+		long userId = System.currentTimeMillis();
 		long chargeAmount = 1000L;
 		TransactionType type = TransactionType.CHARGE;
 
@@ -65,7 +65,7 @@ class PointServiceTest {
 	@DisplayName("유저가 중복해서 포인트 충전")
 	void 유저가_중복해서_포인트_충전() {
 		// given
-		long userId = System.currentTimeMillis();  
+		long userId = System.currentTimeMillis();
 		long firstChargeAmount = 1000L;
 		long secondChargeAmount = 2000L;
 		TransactionType type = TransactionType.CHARGE;
@@ -110,7 +110,6 @@ class PointServiceTest {
 		assertThat(user2SecondUpdate.point()).isEqualTo(user2Charge1 + user2Charge2);
 	}
 
-
 	@Test
 	@DisplayName("잘못된 userId가 들어왔을 때 예외 발생")
 	void 잘못된_userId가_들어왔을때() {
@@ -129,7 +128,7 @@ class PointServiceTest {
 	@DisplayName("충전 금액이 음수인 경우 예외 발생")
 	void 충전_금액이_음수인_경우() {
 		// given
-		long userId = System.currentTimeMillis();  
+		long userId = System.currentTimeMillis();
 		long invalidChargeAmount = -1L;
 		TransactionType type = TransactionType.CHARGE;
 
@@ -160,7 +159,7 @@ class PointServiceTest {
 	@DisplayName("유저의 정보가 있을때 유저의 포인트 조회")
 	void 유저의정보가있을때_유저의포인트조회() {
 		// given
-		long userId = System.currentTimeMillis();  
+		long userId = System.currentTimeMillis();
 		long amount = 1000;
 		TransactionType type = TransactionType.CHARGE;
 		pointService.chargeUserPoints(userId, amount, type);
@@ -177,7 +176,7 @@ class PointServiceTest {
 	@DisplayName("유저의정보가 없을때 유저의 포인트 조회")
 	void 유저의정보가없을때_유저의포인트조회() {
 		// given
-		long userId = System.currentTimeMillis();  
+		long userId = System.currentTimeMillis();
 
 		// when
 		UserPoint userPoint = pointService.selectUserPoint(userId);
@@ -219,7 +218,7 @@ class PointServiceTest {
 	@DisplayName("모든 값이 정상일 때 포인트 사용")
 	void 모든값이정상일때_포인트사용() {
 		// given
-		long userId = System.currentTimeMillis();  
+		long userId = System.currentTimeMillis();
 		long chargeAmount = 1000;
 		TransactionType chargeType = TransactionType.CHARGE;
 		TransactionType useType = TransactionType.USE;
@@ -243,7 +242,7 @@ class PointServiceTest {
 	@DisplayName("사용할 포인트가 현재 가지고 있는 포인트보다 많을 때")
 	void 사용할_포인트가_현재_가지고_있는_포인트보다_많을때() {
 		// given
-		long userId = System.currentTimeMillis();  
+		long userId = System.currentTimeMillis();
 		long chargeAmount = 1000;
 		TransactionType chargeType = TransactionType.CHARGE;
 		pointService.chargeUserPoints(userId, chargeAmount, chargeType);  // 포인트 충전
@@ -258,7 +257,7 @@ class PointServiceTest {
 	@DisplayName("사용할 포인트가 음수일 때 예외 발생")
 	void 사용할_포인트가_음수일때_예외발생() {
 		// given
-		long userId = System.currentTimeMillis();  
+		long userId = System.currentTimeMillis();
 		long chargeAmount = 1000L;
 		TransactionType chargeType = TransactionType.CHARGE;
 		pointService.chargeUserPoints(userId, chargeAmount, chargeType);  // 포인트 충전
@@ -290,7 +289,7 @@ class PointServiceTest {
 	@DisplayName("존재하는유저를 가지고옴")
 	void 존재하는유저를_가지고옴() {
 		// given
-		long userId = System.currentTimeMillis();  
+		long userId = System.currentTimeMillis();
 		long chargeAmount = 1000L;
 		TransactionType chargeType = TransactionType.CHARGE;
 		pointService.chargeUserPoints(userId, chargeAmount, chargeType);  // 포인트 충전
@@ -335,29 +334,27 @@ class PointServiceTest {
 
 
 	/*
-	*  getUserPointHistory()
-	*
-	* 1. 유저가 등록한 정보를 List로 가지고옴
-	* 2. 유저가 등록한 정보가 없을때 빈 List를 가지고옴
-	* 3. 서로 다른 유저의 포인트 히스토리 구분
-	* 4. 포인트 히스토리가 시간 순서대로 기록되는지 검증
-	* */
+	 *  getUserPointHistory()
+	 *
+	 * 1. 유저가 등록한 정보를 List로 가지고옴
+	 * 2. 유저가 등록한 정보가 없을때 빈 List를 가지고옴
+	 * 3. 서로 다른 유저의 포인트 히스토리 구분
+	 * 4. 포인트 히스토리가 시간 순서대로 기록되는지 검증
+	 * */
 
 	@Test
 	@DisplayName("유저가 등록한 정보를 List로 가지고옴")
 	void 유저가_등록한_정보를_List로_가지고옴() {
 		// given
-		long userId = System.currentTimeMillis();  
+		long userId = System.currentTimeMillis();
 		long chargeAmount = 1000L;
 		long useAmount = 1500;
 		TransactionType chargeType = TransactionType.CHARGE;
-
 
 		TransactionType UseType = TransactionType.USE;
 		pointService.chargeUserPoints(userId, chargeAmount, chargeType);  // 포인트 충전
 		pointService.chargeUserPoints(userId, chargeAmount, chargeType);  // 포인트 충전
 		pointService.useUserPoints(userId, useAmount, UseType);
-
 
 		// when
 		List<PointHistory> pointHistories = pointService.selectUserPointHistory(userId);
@@ -386,7 +383,6 @@ class PointServiceTest {
 		// then
 		assertThat(pointHistories).isEmpty();
 	}
-
 
 	@Test
 	@DisplayName("서로 다른 유저의 포인트 히스토리 구분")
@@ -437,12 +433,11 @@ class PointServiceTest {
 			);
 	}
 
-
 	@Test
 	@DisplayName("포인트 히스토리가 시간 순서대로 기록되는지 검증")
 	void 포인트_히스토리가_시간순으로_기록되는지_검증() {
 		// given
-		long userId = System.currentTimeMillis();  
+		long userId = System.currentTimeMillis();
 		long chargeAmount1 = 1000L;
 		long chargeAmount2 = 2000L;
 		long useAmount = 500L;
@@ -458,8 +453,6 @@ class PointServiceTest {
 		// then
 		assertThat(pointHistories).isSortedAccordingTo(Comparator.comparing(PointHistory::updateMillis));
 	}
-
-
 
 }
 
