@@ -1,7 +1,14 @@
-package io.hhplus.tdd.point;
+package io.hhplus.tdd.point.service;
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import io.hhplus.tdd.point.dto.PointHistory;
+import io.hhplus.tdd.point.repository.PointRepository;
+import io.hhplus.tdd.point.dto.TransactionType;
+import io.hhplus.tdd.point.dto.UserPoint;
 
 @Service
 public class PointService {
@@ -26,7 +33,7 @@ public class PointService {
 		return updateUserPoint;
 	}
 
-	public UserPoint useUserPoints(long userId, int amount, TransactionType type) {
+	public UserPoint useUserPoints(long userId, long amount, TransactionType type) {
 		UserPoint userPoint = selectUserPoint(userId);
 
 		if (userPoint.point() == 0 || userPoint.point() < amount) {
@@ -51,4 +58,7 @@ public class PointService {
 	public UserPoint selectUserPoint(long userId) {
 		return pointRepository.selectUserPoint(userId);
 	}
+
+	public List<PointHistory> selectUserPointHistory(long userId) { return pointRepository.selectUserPointHistory(userId);
+}
 }

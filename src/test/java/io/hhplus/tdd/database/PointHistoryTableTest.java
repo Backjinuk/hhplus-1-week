@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import io.hhplus.tdd.point.PointHistory;
-import io.hhplus.tdd.point.TransactionType;
+import io.hhplus.tdd.point.dto.PointHistory;
+import io.hhplus.tdd.point.dto.TransactionType;
 
 @SpringBootTest
 class PointHistoryTableTest {
@@ -38,7 +38,7 @@ class PointHistoryTableTest {
 	@DisplayName("insert시 정상 등록 확인")
 	void insert시_정상_등록_확인() {
 		// given
-		long userId = 1;
+		long userId = System.currentTimeMillis();  
 		long amount = 1000;
 		TransactionType type = TransactionType.CHARGE;
 		long updateMillis = System.currentTimeMillis();
@@ -79,7 +79,7 @@ class PointHistoryTableTest {
 	@DisplayName("insert시 amount가 경계값(1)일때 정상 등록 확인")
 	void insert시_amount가_경계값일때_정상_등록_확인() {
 		// given
-		long userId = 1;
+		long userId = System.currentTimeMillis();  
 		long amount = 1; // 경계값
 		TransactionType type = TransactionType.CHARGE;
 		long updateMillis = System.currentTimeMillis();
@@ -97,7 +97,7 @@ class PointHistoryTableTest {
 	@DisplayName("insert 시 TransactionType이 null일 때 예외 발생")
 	void insert_null_TransactionType_예외발생() {
 		// given
-		long userId = 1;
+		long userId = System.currentTimeMillis();  
 		long amount = 1000;
 		TransactionType type = null;
 		long updateMillis = System.currentTimeMillis();
@@ -114,7 +114,7 @@ class PointHistoryTableTest {
 	@DisplayName("insert시 amount가 음수일때 예외 발생")
 	void insert시_amount가_음수일때_예외_발생() {
 		// given
-		long userId = 1;
+		long userId = System.currentTimeMillis();  
 		long amount = -1;
 		TransactionType type = null;
 		long updateMillis = System.currentTimeMillis();
@@ -149,7 +149,7 @@ class PointHistoryTableTest {
 	@DisplayName("insert시 amount가 너무 클때 예외 발생")
 	void insert시_amount가_너무클때_예외상황() {
 		// given
-		long userId = 1;
+		long userId = System.currentTimeMillis();  
 		long amount = 100000000;
 		TransactionType type = TransactionType.USE;
 		long updateMillis  = System.currentTimeMillis();
@@ -168,7 +168,7 @@ class PointHistoryTableTest {
 	@DisplayName("insert 시 updateMillis가 0일 때 예외 발생")
 	void insert_updateMillis가_0일_때_예외발생() {
 		// given
-		long userId = 1;
+		long userId = System.currentTimeMillis();  
 		long amount = 1000;
 		TransactionType type = TransactionType.CHARGE;
 		long updateMillis = 0; // 0으로 설정
@@ -183,7 +183,7 @@ class PointHistoryTableTest {
 	@DisplayName("insert 시 updateMillis가 음수일 때 예외 발생")
 	void insert_updateMillis가_음수일_때_예외발생() {
 		// given
-		long userId = 1;
+		long userId = System.currentTimeMillis();  
 		long amount = 1000;
 		TransactionType type = TransactionType.CHARGE;
 		long updateMillis = -1000; // 음수 값 설정
@@ -209,7 +209,7 @@ class PointHistoryTableTest {
 	@DisplayName("selectAllByUserId_존재하는_userId_이력_조회")
 	void selectAllByUserId_존재하는_userId_이력_조회() {
 		// given
-		long userId = 1L;
+		long userId = System.currentTimeMillis();  
 		pointHistoryTable.insert(userId, 1000L, TransactionType.CHARGE, System.currentTimeMillis());
 		pointHistoryTable.insert(userId, 500L, TransactionType.USE, System.currentTimeMillis());
 
@@ -226,7 +226,7 @@ class PointHistoryTableTest {
 	@DisplayName("selectAllByUserId_여러_유저_이력_필터링")
 	void selectAllByUserId_여러_유저_이력_필터링() {
 		// given
-		long userId1 = 1L, userId2 = 2L;
+		long userId1 = System.currentTimeMillis(), userId2 = System.currentTimeMillis() + 1;
 		pointHistoryTable.insert(userId1, 1000L, TransactionType.CHARGE, System.currentTimeMillis());
 		pointHistoryTable.insert(userId2, 2000L, TransactionType.CHARGE, System.currentTimeMillis());
 		pointHistoryTable.insert(userId1, 500L, TransactionType.USE, System.currentTimeMillis());

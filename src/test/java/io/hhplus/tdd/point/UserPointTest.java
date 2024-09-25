@@ -2,7 +2,9 @@ package io.hhplus.tdd.point;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
+
+import io.hhplus.tdd.point.dto.UserPoint;
 
 /**
  * 성공 케이스:
@@ -34,9 +36,9 @@ class UserPointTest {
 		UserPoint userPoint = new UserPoint(1, 100, currentMillis);
 
 		// then
-		assertEquals(1, userPoint.id());
-		assertEquals(100, userPoint.point());
-		assertEquals(currentMillis, userPoint.updateMillis());
+		assertThat(userPoint.id()).isEqualTo(1);
+		assertThat(userPoint.point()).isEqualTo(100);
+		assertThat(userPoint.updateMillis()).isEqualTo(currentMillis);
 	}
 
 	@Test
@@ -46,9 +48,9 @@ class UserPointTest {
 		UserPoint userPoint = UserPoint.empty(1);
 
 		// then
-		assertEquals(1, userPoint.id());
-		assertEquals(0, userPoint.point());
-		assertTrue(userPoint.updateMillis() > 0);
+		assertThat(userPoint.id()).isEqualTo(1);
+		assertThat(userPoint.point()).isEqualTo(0);
+		assertThat(userPoint.updateMillis()).isGreaterThan(0);
 	}
 
 	@Test
@@ -58,8 +60,8 @@ class UserPointTest {
 		UserPoint userPoint = new UserPoint(1, 50, System.currentTimeMillis());
 
 		// then
-		assertEquals(1, userPoint.id());
-		assertEquals(50, userPoint.point());
+		assertThat(userPoint.id()).isEqualTo(1);
+		assertThat(userPoint.point()).isEqualTo(50);
 	}
 
 	@Test
@@ -72,9 +74,9 @@ class UserPointTest {
 		UserPoint userPoint = new UserPoint(1, 0, currentMillis);
 
 		// then
-		assertEquals(1, userPoint.id());
-		assertEquals(0, userPoint.point());
-		assertEquals(currentMillis, userPoint.updateMillis());
+		assertThat(userPoint.id()).isEqualTo(1);
+		assertThat(userPoint.point()).isEqualTo(0);
+		assertThat(userPoint.updateMillis()).isEqualTo(currentMillis);
 	}
 
 	@Test
@@ -86,8 +88,8 @@ class UserPointTest {
 		UserPoint userPoint2 = new UserPoint(1, 100, currentMillis);
 
 		// then
-		assertEquals(userPoint1, userPoint2);
-		assertEquals(userPoint1.hashCode(), userPoint2.hashCode());
+		assertThat(userPoint1).isEqualTo(userPoint2);
+		assertThat(userPoint1.hashCode()).isEqualTo(userPoint2.hashCode());
 	}
 
 	// 실패 케이스 테스트 메서드
@@ -96,49 +98,44 @@ class UserPointTest {
 	@DisplayName("유저 ID가 0 이하일 때 예외 발생")
 	void 유저ID가_0이하일_때_예외발생() {
 		// when & then
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			new UserPoint(0, 100, System.currentTimeMillis());
-		});
-		assertEquals("유효 하지 않은 UserId 입니다.", exception.getMessage());
+		assertThatThrownBy(() -> new UserPoint(0, 100, System.currentTimeMillis()))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("유효 하지 않은 UserId 입니다.");
 	}
 
 	@Test
 	@DisplayName("유저 ID가 음수일 때 예외 발생")
 	void 유저ID가_음수일_때_예외발생() {
 		// when & then
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			new UserPoint(-1, 100, System.currentTimeMillis());
-		});
-		assertEquals("유효 하지 않은 UserId 입니다.", exception.getMessage());
+		assertThatThrownBy(() -> new UserPoint(-1, 100, System.currentTimeMillis()))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("유효 하지 않은 UserId 입니다.");
 	}
 
 	@Test
 	@DisplayName("포인트가 0 미만일 때 예외 발생")
 	void 포인트가_0미만일_때_예외발생() {
 		// when & then
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			new UserPoint(1, -10, System.currentTimeMillis());
-		});
-		assertEquals("포인트는 0보다 작을수 없습니다.", exception.getMessage());
+		assertThatThrownBy(() -> new UserPoint(1, -10, System.currentTimeMillis()))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("포인트는 0보다 작을수 없습니다.");
 	}
 
 	@Test
 	@DisplayName("업데이트 시간이 0 이하일 때 예외 발생")
 	void 업데이트시간이_0이하일_때_예외발생() {
 		// when & then
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			new UserPoint(1, 100, 0);
-		});
-		assertEquals("유효하지 않는 시간입니다.", exception.getMessage());
+		assertThatThrownBy(() -> new UserPoint(1, 100, 0))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("유효하지 않는 시간입니다.");
 	}
 
 	@Test
 	@DisplayName("업데이트 시간이 음수일 때 예외 발생")
 	void 업데이트시간이_음수일_때_예외발생() {
 		// when & then
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			new UserPoint(1, 100, -1000);
-		});
-		assertEquals("유효하지 않는 시간입니다.", exception.getMessage());
+		assertThatThrownBy(() -> new UserPoint(1, 100, -1000))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("유효하지 않는 시간입니다.");
 	}
 }

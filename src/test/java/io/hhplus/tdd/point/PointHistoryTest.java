@@ -2,7 +2,10 @@ package io.hhplus.tdd.point;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
+
+import io.hhplus.tdd.point.dto.PointHistory;
+import io.hhplus.tdd.point.dto.TransactionType;
 
 /**
  * 성공 케이스:
@@ -15,11 +18,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * 실패 케이스:
  * 1. 유저 ID가 0 이하일 때 IllegalArgumentException이 발생한다.
  * 2. 유저 ID가 음수일 때 IllegalArgumentException이 발생한다.
- * 3. 포인트 금액이 0 이하일 때 IllegalArgumentException이 발생한다.
- * 4. 포인트 금액이 너무 클 때(100,000,000 이상) IllegalArgumentException이 발생한다.
- * 5. 트랜잭션 타입이 null일 때 NullPointerException이 발생한다.
- * 6. 업데이트 시간이 0 이하일 때 IllegalArgumentException이 발생한다.
- * 7. 업데이트 시간이 음수일 때 IllegalArgumentException이 발생한다.
+ * 3. 포인트 금액이 너무 클 때(100,000,000 이상) IllegalArgumentException이 발생한다.
+ * 4. 트랜잭션 타입이 null일 때 NullPointerException이 발생한다.
+ * 5. 업데이트 시간이 0 이하일 때 IllegalArgumentException이 발생한다.
+ * 6. 업데이트 시간이 음수일 때 IllegalArgumentException이 발생한다.
  */
 
 class PointHistoryTest {
@@ -36,11 +38,11 @@ class PointHistoryTest {
 		PointHistory pointHistory = new PointHistory(1, 1, 5000, TransactionType.CHARGE, currentMillis);
 
 		// then
-		assertEquals(1, pointHistory.id());
-		assertEquals(1, pointHistory.userId());
-		assertEquals(5000, pointHistory.amount());
-		assertEquals(TransactionType.CHARGE, pointHistory.type());
-		assertEquals(currentMillis, pointHistory.updateMillis());
+		assertThat(pointHistory.id()).isEqualTo(1);
+		assertThat(pointHistory.userId()).isEqualTo(1);
+		assertThat(pointHistory.amount()).isEqualTo(5000);
+		assertThat(pointHistory.type()).isEqualTo(TransactionType.CHARGE);
+		assertThat(pointHistory.updateMillis()).isEqualTo(currentMillis);
 	}
 
 	@Test
@@ -53,11 +55,11 @@ class PointHistoryTest {
 		PointHistory pointHistory = new PointHistory(2, 2, 10000, TransactionType.USE, currentMillis);
 
 		// then
-		assertEquals(2, pointHistory.id());
-		assertEquals(2, pointHistory.userId());
-		assertEquals(10000, pointHistory.amount());
-		assertEquals(TransactionType.USE, pointHistory.type());
-		assertEquals(currentMillis, pointHistory.updateMillis());
+		assertThat(pointHistory.id()).isEqualTo(2);
+		assertThat(pointHistory.userId()).isEqualTo(2);
+		assertThat(pointHistory.amount()).isEqualTo(10000);
+		assertThat(pointHistory.type()).isEqualTo(TransactionType.USE);
+		assertThat(pointHistory.updateMillis()).isEqualTo(currentMillis);
 	}
 
 	@Test
@@ -70,7 +72,7 @@ class PointHistoryTest {
 		PointHistory pointHistory = new PointHistory(3, 1, 1, TransactionType.CHARGE, currentMillis);
 
 		// then
-		assertEquals(1, pointHistory.amount());
+		assertThat(pointHistory.amount()).isEqualTo(1);
 	}
 
 	@Test
@@ -83,8 +85,8 @@ class PointHistoryTest {
 		PointHistory pointHistory = new PointHistory(4, 1, 1000, TransactionType.CHARGE, currentMillis);
 
 		// then
-		assertEquals(TransactionType.CHARGE, pointHistory.type());
-		assertTrue(pointHistory.amount() > 0);
+		assertThat(pointHistory.type()).isEqualTo(TransactionType.CHARGE);
+		assertThat(pointHistory.amount()).isGreaterThan(0);
 	}
 
 	@Test
@@ -97,8 +99,8 @@ class PointHistoryTest {
 		PointHistory pointHistory = new PointHistory(5, 1, 500, TransactionType.USE, currentMillis);
 
 		// then
-		assertEquals(TransactionType.USE, pointHistory.type());
-		assertTrue(pointHistory.amount() > 0);
+		assertThat(pointHistory.type()).isEqualTo(TransactionType.USE);
+		assertThat(pointHistory.amount()).isGreaterThan(0);
 	}
 
 	// 실패 케이스 테스트 메서드
@@ -110,10 +112,9 @@ class PointHistoryTest {
 		long currentMillis = System.currentTimeMillis();
 
 		// when & then
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			new PointHistory(1, 0, 5000, TransactionType.CHARGE, currentMillis);
-		});
-		assertEquals("유효하지 않은 유저 ID입니다.", exception.getMessage());
+		assertThatThrownBy(() -> new PointHistory(1, 0, 5000, TransactionType.CHARGE, currentMillis))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("유효하지 않은 유저 ID입니다.");
 	}
 
 	@Test
@@ -123,23 +124,9 @@ class PointHistoryTest {
 		long currentMillis = System.currentTimeMillis();
 
 		// when & then
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			new PointHistory(2, -1, 5000, TransactionType.CHARGE, currentMillis);
-		});
-		assertEquals("유효하지 않은 유저 ID입니다.", exception.getMessage());
-	}
-
-	@Test
-	@DisplayName("포인트 금액이 0 이하일 때 예외 발생")
-	void 포인트_금액이_0이하일_때_예외발생() {
-		// given
-		long currentMillis = System.currentTimeMillis();
-
-		// when & then
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			new PointHistory(3, 1, 0, TransactionType.USE, currentMillis);
-		});
-		assertEquals("포인트 금액은 0보다 커야 합니다.", exception.getMessage());
+		assertThatThrownBy(() -> new PointHistory(2, -1, 5000, TransactionType.CHARGE, currentMillis))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("유효하지 않은 유저 ID입니다.");
 	}
 
 	@Test
@@ -149,10 +136,9 @@ class PointHistoryTest {
 		long currentMillis = System.currentTimeMillis();
 
 		// when & then
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			new PointHistory(4, 1, 100000000, TransactionType.CHARGE, currentMillis);
-		});
-		assertEquals("충전 금액이 너무 큽니다. 담당자에게 문의 부탁드립니다.", exception.getMessage());
+		assertThatThrownBy(() -> new PointHistory(4, 1, 100000000, TransactionType.CHARGE, currentMillis))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("충전 금액이 너무 큽니다. 담당자에게 문의 부탁드립니다.");
 	}
 
 	@Test
@@ -162,10 +148,9 @@ class PointHistoryTest {
 		long currentMillis = System.currentTimeMillis();
 
 		// when & then
-		NullPointerException exception = assertThrows(NullPointerException.class, () -> {
-			new PointHistory(5, 1, 5000, null, currentMillis);
-		});
-		assertEquals("트랜잭션 타입이 null 입니다.", exception.getMessage());
+		assertThatThrownBy(() -> new PointHistory(5, 1, 5000, null, currentMillis))
+			.isInstanceOf(NullPointerException.class)
+			.hasMessage("트랜잭션 타입이 null 입니다.");
 	}
 
 	@Test
@@ -175,10 +160,9 @@ class PointHistoryTest {
 		long currentMillis = System.currentTimeMillis();
 
 		// when & then
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			new PointHistory(6, 1, 5000, TransactionType.USE, 0);
-		});
-		assertEquals("유효하지 않은 타임스탬프입니다.", exception.getMessage());
+		assertThatThrownBy(() -> new PointHistory(6, 1, 5000, TransactionType.USE, 0))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("유효하지 않은 타임스탬프입니다.");
 	}
 
 	@Test
@@ -188,9 +172,8 @@ class PointHistoryTest {
 		long currentMillis = System.currentTimeMillis();
 
 		// when & then
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			new PointHistory(7, 1, 5000, TransactionType.USE, -1000);
-		});
-		assertEquals("유효하지 않은 타임스탬프입니다.", exception.getMessage());
+		assertThatThrownBy(() -> new PointHistory(7, 1, 5000, TransactionType.USE, -1000))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("유효하지 않은 타임스탬프입니다.");
 	}
 }

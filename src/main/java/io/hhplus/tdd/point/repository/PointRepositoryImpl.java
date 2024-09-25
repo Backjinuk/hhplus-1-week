@@ -1,4 +1,4 @@
-package io.hhplus.tdd.point;
+package io.hhplus.tdd.point.repository;
 
 import java.util.List;
 
@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
+import io.hhplus.tdd.point.dto.PointHistory;
+import io.hhplus.tdd.point.dto.TransactionType;
+import io.hhplus.tdd.point.dto.UserPoint;
 
 @Repository
 public class PointRepositoryImpl implements PointRepository {
@@ -21,11 +24,6 @@ public class PointRepositoryImpl implements PointRepository {
 	}
 
 	@Override
-	public UserPoint selectById(long id) {
-		return userPointTable.selectById(id);
-	}
-
-	@Override
 	public UserPoint insertOrUpdate(long id, long amount) {
 		return userPointTable.insertOrUpdate(id, amount);
 	}
@@ -36,11 +34,6 @@ public class PointRepositoryImpl implements PointRepository {
 	}
 
 	@Override
-	public List<PointHistory> selectAllByUserId(long id) {
-		return pointHistoryTable.selectAllByUserId(id);
-	}
-
-	@Override
 	public UserPoint selectUserPoint(long userId) {
 		return userPointTable.selectById(userId);
 	}
@@ -48,5 +41,10 @@ public class PointRepositoryImpl implements PointRepository {
 	@Override
 	public UserPoint useUserPoints(long userId, long point) {
 		return userPointTable.insertOrUpdate(userId, point);
+	}
+
+	@Override
+	public List<PointHistory> selectUserPointHistory(long userId) {
+		return pointHistoryTable.selectAllByUserId(userId);
 	}
 }

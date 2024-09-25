@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import io.hhplus.tdd.point.UserPoint;
+import io.hhplus.tdd.point.dto.UserPoint;
 
 @SpringBootTest
 class UserPointTableTest {
@@ -34,7 +34,7 @@ class UserPointTableTest {
 	@DisplayName("insertOrUpdate 올바른 값으로 등록")
 	void insertOrUpdate_올바른_값으로_등록() {
 		// given
-		long id = 1;
+		long id = System.currentTimeMillis();  
 		long amount = 1000;
 
 		// when
@@ -67,7 +67,7 @@ class UserPointTableTest {
 	@DisplayName("insertOrUpdate시 amount가 경계값(1)일때 정상 등록 확인")
 	void insertOrUpdate_경계값_등록_확인() {
 		// given
-		long id = 1;
+		long id = System.currentTimeMillis();  
 		long amount = 1; // 경계값
 
 		// when
@@ -83,7 +83,7 @@ class UserPointTableTest {
 	@DisplayName("insertOrUpdate시 amount가 음수인경우")
 	void insertOrUpdate시_amout가_음수인경우() {
 		// given
-		long id = 1;
+		long id = System.currentTimeMillis();  
 		long amount = -1;
 
 		// when
@@ -98,7 +98,7 @@ class UserPointTableTest {
 	@DisplayName("insertOrUpdate시 update가 정상적으로 되는지 확인")
 	void insertOrUpdate시_update가_정상적으로_되는지_확인() {
 		// given
-		long id = 1;
+		long id = System.currentTimeMillis();  
 		long initAmount = 1000;
 		long updateAmount = 3000;
 
@@ -115,7 +115,7 @@ class UserPointTableTest {
 	@DisplayName("insertOrUpdate 호출시 updateMillis가 정상적으로 최신화 되는지 확인")
 	void test() throws InterruptedException {
 		// given
-		long id = 1;
+		long id = System.currentTimeMillis();  
 		long amount = 1000;
 
 		// when
@@ -162,7 +162,7 @@ class UserPointTableTest {
 	@DisplayName("selectById 존재하는 ID를 조회")
 	void selectById_존재하는_Id() {
 		// given
-		long id = 1;
+		long id = System.currentTimeMillis();  
 		long amount = 1000;
 		userPointTable.insertOrUpdate(id, amount);
 
@@ -178,7 +178,7 @@ class UserPointTableTest {
 	@DisplayName("selectById 존재하지 않는 Id 조회시 userPoint.empty 호출")
 	void selectById_존재하지_않는_Id_조회시_userPoint_empty_호출() {
 		// given
-		long id = 1;
+		long id = System.currentTimeMillis();  
 
 		// when
 		UserPoint userPoint = userPointTable.selectById(id);
@@ -194,7 +194,7 @@ class UserPointTableTest {
 	void 동일한id로_여러번_호출해도_동일한_UserPoint_객체를_반환한다() {
 
 		// given
-		long id = 1;
+		long id = System.currentTimeMillis();  
 		long amount = 1000;
 		userPointTable.insertOrUpdate(id, amount);
 
