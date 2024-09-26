@@ -2,15 +2,18 @@ package io.hhplus.tdd.point.service;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import io.hhplus.tdd.point.dto.PointHistory;
 import io.hhplus.tdd.point.dto.TransactionType;
 import io.hhplus.tdd.point.dto.UserPoint;
 
@@ -84,7 +87,6 @@ class PointServiceSynchroTest {
 				System.out.println("Thread " + Thread.currentThread().getId() + " (User3) 종료");
 			});
 		}
-
 
 		executorService.shutdown();
 		boolean terminated = executorService.awaitTermination(30, TimeUnit.SECONDS); // 모든 스레드가 작업을 끝낼 때까지 기다림
@@ -168,13 +170,68 @@ class PointServiceSynchroTest {
 		UserPoint userPoint2 = pointService.selectUserPoint(userId2);
 		UserPoint userPoint3 = pointService.selectUserPoint(userId3);
 
+		List<PointHistory> pointHistories1 = pointService.selectUserPointHistory(userId1);
+		List<PointHistory> pointHistories2 = pointService.selectUserPointHistory(userId2);
+		List<PointHistory> pointHistories3 = pointService.selectUserPointHistory(userId3);
+
 		// 최종 포인트 확인: chargeAmount * threadCountPerUser - useAmount * threadCountPerUser
 		assertThat(userPoint1.point()).isEqualTo((chargeAmount - useAmount) * threadCountPerUser);
 		assertThat(userPoint2.point()).isEqualTo((chargeAmount - useAmount) * threadCountPerUser);
 		assertThat(userPoint3.point()).isEqualTo((chargeAmount - useAmount) * threadCountPerUser);
+
+		assertThat(pointHistories1).hasSize(40);
+		assertThat(pointHistories2).hasSize(40);
+		assertThat(pointHistories3).hasSize(40);
+
 	}
 
+	@Test
+	@DisplayName("랜덤 충전 및 사용 동시성 테스트")
+	void 랜덤_충전_및_사용_동시성_테스트() throws InterruptedException {
+		// given
+		long userId1 = 1;
+		long chargeAmount = 1000;
+		long useAmount = 500;
+		int totalThreads = 2; // 총 스레드 수
+		AtomicInteger chargeCount = new AtomicInteger();
+		AtomicInteger useCount = new AtomicInteger();
 
+		ExecutorService executorService = Executors.newFixedThreadPool(totalThreads * 2);
 
+		// when
+		for (int i = 0; i < totalThreads; i++) {
+			int random = (int)(Math.random() * 2); // 0 또는 1 무작위로 생성
+			if (random == 0) {
+				executorService.execute(() -> {
+					System.out.println("Thread " + Thread.currentThread().getId() + " (충전) 시작");
+					pointService.chargeUserPoints(userId1, chargeAmount, TransactionType.CHARGE);
+					chargeCount.incrementAndGet();
+					System.out.println("Thread " + Thread.currentThread().getId() + " (충전) 종료");
+				});
+			} else {
+				executorService.execute(() -> {
+					System.out.println("Thread " + Thread.currentThread().getId() + " (사용) 시작");
+					pointService.useUserPoints(userId1, useAmount, TransactionType.USE);
+					useCount.incrementAndGet();
+					System.out.println("Thread " + Thread.currentThread().getId() + " (사용) 종료");
+				});
+			}
+		}
 
+		executorService.shutdown();
+		boolean terminated = executorService.awaitTermination(240, TimeUnit.SECONDS);
+
+		if (!terminated) {
+			fail("일부 스레드가 지정된 시간 내에 종료되지 않았습니다.");
+		}
+
+		// then
+		UserPoint userPoint = pointService.selectUserPoint(userId1);
+		List<PointHistory> pointHistories = pointService.selectUserPointHistory(userId1);
+
+		long totalUserPoint = (chargeAmount * chargeCount.get()) - (useAmount * useCount.get());
+
+		assertThat(userPoint.point()).isEqualTo(totalUserPoint);
+		assertThat(pointHistories).hasSize(chargeCount.get() + useCount.get());
+	}
 }
