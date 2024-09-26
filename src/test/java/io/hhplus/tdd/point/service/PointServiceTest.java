@@ -1,9 +1,10 @@
-package io.hhplus.tdd.point;
+package io.hhplus.tdd.point.service;
 
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import io.hhplus.tdd.point.dto.PointHistory;
 import io.hhplus.tdd.point.dto.TransactionType;
 import io.hhplus.tdd.point.dto.UserPoint;
-import io.hhplus.tdd.point.service.PointService;
 
 @SpringBootTest
 class PointServiceTest {
@@ -216,7 +216,7 @@ class PointServiceTest {
 
 	@Test
 	@DisplayName("모든 값이 정상일 때 포인트 사용")
-	void 모든값이정상일때_포인트사용() {
+	void 모든값이정상일때_포인트사용() throws ExecutionException, InterruptedException {
 		// given
 		long userId = System.currentTimeMillis();
 		long chargeAmount = 1000;
@@ -344,7 +344,7 @@ class PointServiceTest {
 
 	@Test
 	@DisplayName("유저가 등록한 정보를 List로 가지고옴")
-	void 유저가_등록한_정보를_List로_가지고옴() {
+	void 유저가_등록한_정보를_List로_가지고옴() throws ExecutionException, InterruptedException {
 		// given
 		long userId = System.currentTimeMillis();
 		long chargeAmount = 1000L;
@@ -386,7 +386,7 @@ class PointServiceTest {
 
 	@Test
 	@DisplayName("서로 다른 유저의 포인트 히스토리 구분")
-	void 서로다른_유저의_포인트_히스토리_구분() {
+	void 서로다른_유저의_포인트_히스토리_구분() throws ExecutionException, InterruptedException {
 		// given
 		long userId1 = 1L;
 		long userId2 = 2L;
@@ -435,7 +435,7 @@ class PointServiceTest {
 
 	@Test
 	@DisplayName("포인트 히스토리가 시간 순서대로 기록되는지 검증")
-	void 포인트_히스토리가_시간순으로_기록되는지_검증() {
+	void 포인트_히스토리가_시간순으로_기록되는지_검증() throws ExecutionException, InterruptedException {
 		// given
 		long userId = System.currentTimeMillis();
 		long chargeAmount1 = 1000L;

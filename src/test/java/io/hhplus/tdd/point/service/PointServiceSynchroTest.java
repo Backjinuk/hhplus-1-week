@@ -57,25 +57,124 @@ class PointServiceSynchroTest {
 	@DisplayName("여러회원이_한번에_포인트충전")
 	void 여러회원이한번에_포인트충전() throws InterruptedException {
 		// given
-		long userId = 1;
-		int threadCount = 1000; // 동시 실행할 스레드 수
-		long chargeAmount = 1000L;
+		long userId1 = 1;
+		long userId2 = 2;
+		long userId3 = 3;
+		int threadCountPerUser = 20; // 각 유저에 대해 실행할 스레드 수
+		long chargeAmount = 1000;
 
 		// when
-		ExecutorService executorService = Executors.newFixedThreadPool(threadCount); // 고정된 수의 스레드 풀 생성
+		ExecutorService executorService = Executors.newFixedThreadPool(threadCountPerUser * 3); // 스레드 수를 총 유저 수에 맞춰 늘림
 
-		for (int i = 0; i < threadCount; i++) {
+		// 각 회원에 대해 별도의 스레드에서 충전 작업 수행
+		for (int i = 0; i < threadCountPerUser; i++) {
 			executorService.execute(() -> {
-				pointService.chargeUserPoints(userId, chargeAmount, TransactionType.CHARGE);
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User1) 시작");
+				pointService.chargeUserPoints(userId1, chargeAmount, TransactionType.CHARGE);
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User1) 종료");
+			});
+			executorService.execute(() -> {
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User2) 시작");
+				pointService.chargeUserPoints(userId2, chargeAmount, TransactionType.CHARGE);
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User2) 종료");
+			});
+			executorService.execute(() -> {
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User3) 시작");
+				pointService.chargeUserPoints(userId3, chargeAmount, TransactionType.CHARGE);
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User3) 종료");
+			});
+		}
+
+
+		executorService.shutdown();
+		boolean terminated = executorService.awaitTermination(30, TimeUnit.SECONDS); // 모든 스레드가 작업을 끝낼 때까지 기다림
+
+		// awaitTermination의 결과를 체크
+		if (!terminated) {
+			fail("일부 스레드가 지정된 시간 내에 종료되지 않았습니다.");
+		}
+
+		// then - 각 회원의 포인트가 정확히 누적되었는지 확인
+		UserPoint userPoint1 = pointService.selectUserPoint(userId1);
+		UserPoint userPoint2 = pointService.selectUserPoint(userId2);
+		UserPoint userPoint3 = pointService.selectUserPoint(userId3);
+
+		assertThat(userPoint1.point()).isEqualTo(chargeAmount * threadCountPerUser);
+		assertThat(userPoint2.point()).isEqualTo(chargeAmount * threadCountPerUser);
+		assertThat(userPoint3.point()).isEqualTo(chargeAmount * threadCountPerUser);
+
+	}
+
+	@Test
+	@DisplayName("여러회원이_동시에_포인트_충전과_사용_번갈아가면서_테스트")
+	void 여러회원이_동시에_포인트_충전과_사용_번갈아가면서_테스트() throws InterruptedException {
+		// given
+		long userId1 = 1;
+		long userId2 = 2;
+		long userId3 = 3;
+		int threadCountPerUser = 20; // 각 유저에 대해 실행할 스레드 수
+		long chargeAmount = 1000;
+		long useAmount = 500;
+
+		// when
+		ExecutorService executorService = Executors.newFixedThreadPool(threadCountPerUser * 3); // 스레드 수를 총 유저 수에 맞춰 늘림
+
+		// 각 회원에 대해 충전과 사용을 번갈아 수행
+		for (int i = 0; i < threadCountPerUser; i++) {
+			executorService.execute(() -> {
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User1 충전) 시작");
+				pointService.chargeUserPoints(userId1, chargeAmount, TransactionType.CHARGE);
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User1 충전) 종료");
+			});
+			executorService.execute(() -> {
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User1 사용) 시작");
+				pointService.useUserPoints(userId1, useAmount, TransactionType.USE);
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User1 사용) 종료");
+			});
+
+			executorService.execute(() -> {
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User2 충전) 시작");
+				pointService.chargeUserPoints(userId2, chargeAmount, TransactionType.CHARGE);
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User2 충전) 종료");
+			});
+			executorService.execute(() -> {
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User2 사용) 시작");
+				pointService.useUserPoints(userId2, useAmount, TransactionType.USE);
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User2 사용) 종료");
+			});
+
+			executorService.execute(() -> {
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User3 충전) 시작");
+				pointService.chargeUserPoints(userId3, chargeAmount, TransactionType.CHARGE);
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User3 충전) 종료");
+			});
+			executorService.execute(() -> {
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User3 사용) 시작");
+				pointService.useUserPoints(userId3, useAmount, TransactionType.USE);
+				System.out.println("Thread " + Thread.currentThread().getId() + " (User3 사용) 종료");
 			});
 		}
 
 		executorService.shutdown();
-		executorService.awaitTermination(10, TimeUnit.SECONDS); // 모든 스레드가 작업을 끝낼 때까지 기다림
+		boolean terminated = executorService.awaitTermination(30, TimeUnit.SECONDS); // 모든 스레드가 작업을 끝낼 때까지 기다림
 
-		// then - 포인트가 정확히 누적되었는지 확인
-		UserPoint userPoint = pointService.selectUserPoint(userId);
-		assertThat(userPoint.point()).isEqualTo(chargeAmount * threadCount);  // threadCount * chargeAmount 만큼 충전되었어야 함
+		// awaitTermination의 결과를 체크
+		if (!terminated) {
+			fail("일부 스레드가 지정된 시간 내에 종료되지 않았습니다.");
+		}
+
+		// then - 각 회원의 포인트가 정확히 계산되었는지 확인
+		UserPoint userPoint1 = pointService.selectUserPoint(userId1);
+		UserPoint userPoint2 = pointService.selectUserPoint(userId2);
+		UserPoint userPoint3 = pointService.selectUserPoint(userId3);
+
+		// 최종 포인트 확인: chargeAmount * threadCountPerUser - useAmount * threadCountPerUser
+		assertThat(userPoint1.point()).isEqualTo((chargeAmount - useAmount) * threadCountPerUser);
+		assertThat(userPoint2.point()).isEqualTo((chargeAmount - useAmount) * threadCountPerUser);
+		assertThat(userPoint3.point()).isEqualTo((chargeAmount - useAmount) * threadCountPerUser);
 	}
+
+
+
 
 }

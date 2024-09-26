@@ -1,32 +1,27 @@
-package io.hhplus.tdd.point;
+package io.hhplus.tdd.point.dto;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.*;
 
-import io.hhplus.tdd.point.dto.PointHistory;
-import io.hhplus.tdd.point.dto.TransactionType;
-
-/**
- * 성공 케이스:
- * 1. 정상적인 유저 ID, 포인트 금액, 트랜잭션 타입(USE, CHARGE), 업데이트 시간으로 PointHistory 객체를 생성할 수 있다.
- * 2. 타임스탬프가 현재 시간일 때 정상적으로 PointHistory 객체를 생성할 수 있다.
- * 3. 포인트 금액이 경계값(1)일 때 정상적으로 PointHistory 객체를 생성할 수 있다.
- * 4. 트랜잭션 타입이 CHARGE일 때 포인트 충전.
- * 5. 트랜잭션 타입이 USE일 때 포인트 사용.
- *
- * 실패 케이스:
- * 1. 유저 ID가 0 이하일 때 IllegalArgumentException이 발생한다.
- * 2. 유저 ID가 음수일 때 IllegalArgumentException이 발생한다.
- * 3. 포인트 금액이 너무 클 때(100,000,000 이상) IllegalArgumentException이 발생한다.
- * 4. 트랜잭션 타입이 null일 때 NullPointerException이 발생한다.
- * 5. 업데이트 시간이 0 이하일 때 IllegalArgumentException이 발생한다.
- * 6. 업데이트 시간이 음수일 때 IllegalArgumentException이 발생한다.
- */
-
 class PointHistoryTest {
 
-	// 성공 케이스 테스트 메서드
+	/**
+	 * 성공 케이스:
+	 * 1. 정상적인 유저 ID, 포인트 금액, 트랜잭션 타입(USE, CHARGE), 업데이트 시간으로 PointHistory 객체를 생성할 수 있다.
+	 * 2. 타임스탬프가 현재 시간일 때 정상적으로 PointHistory 객체를 생성할 수 있다.
+	 * 3. 포인트 금액이 경계값(1)일 때 정상적으로 PointHistory 객체를 생성할 수 있다.
+	 * 4. 트랜잭션 타입이 CHARGE일 때 포인트 충전.
+	 * 5. 트랜잭션 타입이 USE일 때 포인트 사용.
+	 *
+	 * 실패 케이스:
+	 * 1. 유저 ID가 0 이하일 때 IllegalArgumentException이 발생한다.
+	 * 2. 유저 ID가 음수일 때 IllegalArgumentException이 발생한다.
+	 * 3. 포인트 금액이 너무 클 때(100,000,000 이상) IllegalArgumentException이 발생한다.
+	 * 4. 트랜잭션 타입이 null일 때 NullPointerException이 발생한다.
+	 * 5. 업데이트 시간이 0 이하일 때 IllegalArgumentException이 발생한다.
+	 * 6. 업데이트 시간이 음수일 때 IllegalArgumentException이 발생한다.
+	 */
 
 	@Test
 	@DisplayName("정상적인 입력값으로 PointHistory 객체 생성")
