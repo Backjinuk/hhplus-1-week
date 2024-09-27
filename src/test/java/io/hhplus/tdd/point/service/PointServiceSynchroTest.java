@@ -94,7 +94,7 @@ class PointServiceSynchroTest {
 		long userId1 = 1;
 		long userId2 = 2;
 		long userId3 = 3;
-		int threadCountPerUser = 20; // 각 유저에 대해 실행할 스레드 수
+		int threadCountPerUser = 25; // 각 유저에 대해 실행할 스레드 수
 		long chargeAmount = 1000;
 		long useAmount = 500;
 
@@ -138,7 +138,7 @@ class PointServiceSynchroTest {
 		}
 
 		executorService.shutdown();
-		boolean terminated = executorService.awaitTermination(30, TimeUnit.SECONDS); // 모든 스레드가 작업을 끝낼 때까지 기다림
+		boolean terminated = executorService.awaitTermination(2000, TimeUnit.SECONDS); // 모든 스레드가 작업을 끝낼 때까지 기다림
 
 		// awaitTermination의 결과를 체크
 		if (!terminated) {
@@ -159,9 +159,9 @@ class PointServiceSynchroTest {
 		assertThat(userPoint2.point()).isEqualTo((chargeAmount - useAmount) * threadCountPerUser);
 		assertThat(userPoint3.point()).isEqualTo((chargeAmount - useAmount) * threadCountPerUser);
 
-		assertThat(pointHistories1).hasSize(40);
-		assertThat(pointHistories2).hasSize(40);
-		assertThat(pointHistories3).hasSize(40);
+		assertThat(pointHistories1).hasSize(100);
+		assertThat(pointHistories2).hasSize(100);
+		assertThat(pointHistories3).hasSize(100);
 
 	}
 
@@ -172,7 +172,7 @@ class PointServiceSynchroTest {
 		long userId1 = 1;
 		long chargeAmount = 1000;
 		long useAmount = 500;
-		int totalThreads = 10; // 총 스레드 수
+		int totalThreads = 50; // 총 스레드 수
 		AtomicInteger chargeCount = new AtomicInteger();
 		AtomicInteger useCount = new AtomicInteger();
 
