@@ -1,4 +1,4 @@
-package io.hhplus.tdd.point.dto;
+package io.hhplus.tdd.point;
 
 
 /**
