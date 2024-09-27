@@ -261,7 +261,7 @@ class PointServiceSynchroTest {
 	}
 
 
-
+	//
 	@Test
 	@DisplayName("포인트 충전 후 사용 순서 보장 테스트")
 	void 포인트_충전_후_사용_순서_보장_테스트() throws InterruptedException {
