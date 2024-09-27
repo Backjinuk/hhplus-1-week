@@ -35,7 +35,6 @@ class PointServiceSynchroTest {
 	 *
 	 */
 
-
 	@Test
 	@DisplayName("여러회원이_한번에_포인트충전")
 	void 여러회원이한번에_포인트충전() throws InterruptedException {
@@ -94,7 +93,7 @@ class PointServiceSynchroTest {
 		long userId1 = 1;
 		long userId2 = 2;
 		long userId3 = 3;
-		int threadCountPerUser = 25; // 각 유저에 대해 실행할 스레드 수
+		int threadCountPerUser = 50; // 각 유저에 대해 실행할 스레드 수
 		long chargeAmount = 1000;
 		long useAmount = 500;
 
@@ -215,8 +214,6 @@ class PointServiceSynchroTest {
 		assertThat(pointHistories).hasSize(chargeCount.get() + useCount.get());
 	}
 
-
-
 	@Test
 	@DisplayName("포인트 부족 시 다중 스레드 재시도 테스트")
 	void 포인트_부족_시_다중_스레드_재시도_테스트() throws InterruptedException {
@@ -259,7 +256,6 @@ class PointServiceSynchroTest {
 		assertThat(successCount.get()).isEqualTo(2); // 1000 포인트로 500씩 2번만 사용 가능
 		assertThat(failureCount.get()).isEqualTo(8); // 나머지 8번은 포인트 부족으로 실패
 	}
-
 
 	//
 	@Test
@@ -308,8 +304,6 @@ class PointServiceSynchroTest {
 		// 충전 횟수와 사용 횟수 검증
 		assertThat(chargeCount.get()).isGreaterThanOrEqualTo(useCount.get());
 	}
-
-
 
 	@Test
 	@DisplayName("동시 사용 시 포인트 중복 차감 방지 테스트")
