@@ -29,8 +29,8 @@ public class PointService {
 	 * */
 
 	private final PointRepository pointRepository;
-	private final ConcurrentHashMap<Long, Lock> userLocks = new ConcurrentHashMap<>();
 	private final Queue<PointHistory> failedRequests = new ConcurrentLinkedQueue<PointHistory>();
+	private final ConcurrentHashMap<Long, Lock> userLocks = new ConcurrentHashMap<>();
 
 	@Autowired
 	public PointService(PointRepository pointRepository) {
@@ -96,8 +96,14 @@ public class PointService {
 		for (PointHistory failedRequest : failedRequests) {
 			if (failedRequest.userId() == userId) {
 				try {
-					// 포인트 사용 재시도
-					useUserPoints(failedRequest.userId(), failedRequest.amount(), failedRequest.type());
+
+					long point = pointRepository.selectUserPoint(userId).point();
+
+					if(point > failedRequest.amount()){
+
+						// 포인트 사용 재시도
+						useUserPoints(failedRequest.userId(), failedRequest.amount(), failedRequest.type());
+					}
 				} catch (IllegalArgumentException e) {
 					// 포인트 부족으로 재시도 실패
 					System.err.println("포인트 부족: UserId = " + userId);
